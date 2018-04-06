@@ -76,7 +76,7 @@ int main(int argc, char **argv){
 	
 	// Open file
 	FILE *arq;
-	arq = fopen("Client_made.jpeg", "w+");
+	arq = fopen(nome_do_arquivo, "w+");
 	if (arq == NULL){
 		printf("Problemas na criacao do arquivo");
 		exit(1);	
@@ -94,7 +94,7 @@ int main(int argc, char **argv){
 		printf("Total recebido: %d\n", total_recebido);
 		// Print server response
 		int i;
-		for (i=0; i<5; i++){
+		for (i=0; i<tam_buffer; i++){
 			printf("Data received: %c \n", server_response[i]);
 		}
 		total_gravado = fwrite(server_response, 1, total_recebido, arq);
