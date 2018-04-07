@@ -25,6 +25,7 @@ int main(int argc, char **argv){
 	char *nome_do_servidor = calloc(host_len, sizeof (*nome_do_servidor));
 	int porta_do_servidor;
 	char *nome_do_arquivo = calloc(filename_len, sizeof (*nome_do_arquivo));
+	//salva o tamanho do buffer recebido pela linha de comando
 	int tam_buffer = atoi(argv[4]);
 
 	//verifica se o espaço de memória foi alocado com sucesso
