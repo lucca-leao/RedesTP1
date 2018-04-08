@@ -10,89 +10,73 @@ void error(const char *msg){
 	perror(msg);
 	exit(1);
 }
-
 int main(int argc, char * argv[]){
+	//testa se recebeu o numero correto de argumentos da linha de comando
 	if(argc < 3){	
 		fprintf(stderr , "Parametros faltando");
 		exit(1);
 	}
-	
+	//salva o tamanho do buffer recebido pela linha de comando
 	int tam_buffer = atoi(argv[2]);
-	//char server_message[256] = "You have reached the server!";
 	
 	
-	// Create socket
+	//cria um socket
 	int server_socket;
-	server_socket = socket(AF_INET, SOCK_STREAM, 0); // 0 is default, TCP
+	server_socket = socket(AF_INET, SOCK_STREAM, 0); // 0 é padrão para conexao TCP
 	if(server_socket < 0){
 		error("Falha ao criar socket");
 	}
-	
+	//salva o numero da porta recebido pela linha de comando
 	int portno = atoi(argv[1]);
-	// Define the server address
+	//define o endereco do servidor
 	struct sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
 	server_address.sin_port = htons(portno);
 	server_address.sin_addr.s_addr = inet_addr("0.0.0.0"); // INADDR_ANY; 
 	
-	// Bind 
+	//bind() associa um socket ao endereco do servidor
 	bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address));
 	if(server_socket < 0){
 		error("Falha de bind");
 	}
 	
-	// Listen
+	//a funcao listen() diz ao sockete que ele pode aceitar conexoes, o segundo parametro é o numero maximo de conexoes que podem ser feitas pelo socket
 	listen(server_socket, 2);
-	
-	int client_socket; // Get client socket
-
-	// Accept
+	int client_socket;
+	//accept() extrai a primeira conexao na fila de conexoes pendentes
 	client_socket = accept(server_socket, NULL, NULL);
 	
-	// Receive request
+	//recebe uma requisicao do cliente contendo o nome do arquivo solicitado
 	char client_request[256];
 	recv(client_socket, &client_request, sizeof(client_request), 0);
 	printf("Received request from client: %s\n", client_request);
 	
-	//Read file
+	//abre o arquivo solicitado
 	FILE *arq;
 	arq = fopen(client_request, "r");
 	if (arq == NULL){
 		printf("Erro na abertura do arquivo");
 		exit(1);
 	}
-	int total_lido; 
-	char buffer[tam_buffer];
-	//total_lido = fread(buffer, 1, tam_buffer, arq);
-	/*while (fread(buffer, 1, tam_buffer, arq) == 5){
-		printf("Buffer read 0: %c\n", buffer[0]);
-		printf("Buffer read 1: %c\n", buffer[1]);
-		printf("Buffer read 2: %c\n", buffer[2]);
-		printf("Buffer read 3: %c\n", buffer[3]);
-		printf("Buffer read 4: %c\n", buffer[4]);
-		send(client_socket, buffer, tam_buffer, 0);
-	}*/
+	int total_lido; //guarda o tamanho do dado que sera colocado no buffer
+	char buffer[tam_buffer]; //buffer para envio do arquivo
+	int i;
 	do {	
 		total_lido = fread(buffer, 1, tam_buffer, arq);
-		printf("Buffer read 0: %c\n", buffer[0]);
-		printf("Buffer read 1: %c\n", buffer[1]);
-		printf("Buffer read 2: %c\n", buffer[2]);
-		printf("Buffer read 3: %c\n", buffer[3]);
-		printf("Buffer read 4: %c\n", buffer[4]);
+		//imprime os dados no buffer de envio
+		for(i=0; i < tam_buffer; i++){
+		printf("Buffer read %i: %c\n", i, buffer[i]);}
+		//envia para o socket client os dados no buffer
 		send(client_socket, buffer, total_lido, 0);
 		printf("Enviado: %d \n", total_lido);
+		//reseta o buffer para a proxima iteracao do loop
 		memset(buffer, 0, tam_buffer );
-	} while(total_lido != 0);
-	//send(client_socket, buffer, tam_buffer, 0);
+	} while(total_lido != 0); //o processo de envio para quando o buffer nao receber mais dado
 	
-	
-	// Send data
-	//send(client_socket, server_message, sizeof(server_message), 0);
-	
-	// Close socket 
+	//encerra a conexao
 	close(server_socket);
 	
-	// Close file
+	//fecha o arquivo
 	fclose(arq);
 
 	return 0;
