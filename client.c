@@ -119,8 +119,8 @@ int main(int argc, char **argv){
 	
 	//chama gettimeofday bara obter o tempo ao final da transferência
 	gettimeofday(&t2, NULL);
-	//calcula o tempo em ms e a taxa de transferencia
-	double tempoGasto = (t2.tv_usec - t1.tv_usec)/1000;
+	//calcula o tempo em s e a taxa de transferencia
+	double tempoGasto = (t2.tv_sec - t1.tv_sec);
 	double taxa = tam_arquivo/tempoGasto;
 
 	printf("Tamanho do arquivo: %dB\nTempo gasto:%fms\nTaxa de transferencia: %fkbps", tam_arquivo, tempoGasto, taxa);
