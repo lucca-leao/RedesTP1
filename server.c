@@ -60,15 +60,10 @@ int main(int argc, char * argv[]){
 	}
 	int total_lido; //guarda o tamanho do dado que sera colocado no buffer
 	char buffer[tam_buffer]; //buffer para envio do arquivo
-	int i;
 	do {	
 		total_lido = fread(buffer, 1, tam_buffer, arq);
-		//imprime os dados no buffer de envio
-		for(i=0; i < tam_buffer; i++){
-		printf("Buffer read %i: %c\n", i, buffer[i]);}
 		//envia para o socket client os dados no buffer
 		send(client_socket, buffer, total_lido, 0);
-		printf("Enviado: %d \n", total_lido);
 		//reseta o buffer para a proxima iteracao do loop
 		memset(buffer, 0, tam_buffer );
 	} while(total_lido != 0); //o processo de envio para quando o buffer nao receber mais dado
