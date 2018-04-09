@@ -97,13 +97,6 @@ int main(int argc, char **argv){
 		//recv() salva a resposta do servidor no buffer e retorna o tamanho em bytes da resposta do servidor
 		total_recebido = recv(network_socket, &server_response, tam_buffer, 0);
 		tam_arquivo += total_recebido;
-		//imprime a resposta do servidor
-		printf("Total recebido: %d\n", total_recebido);
-		int i;
-		//imprime na tela os dados recebidos do servidor
-		for (i=0; i<tam_buffer; i++){
-			printf("Data received: %c \n", server_response[i]);
-		}
 		total_gravado = fwrite(server_response, 1, total_recebido, arq);
 		//esvazia o buffer para a proxima iteracao do loop
 		memset(server_response, 0, tam_buffer);
